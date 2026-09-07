@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class Points</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --chalk: #23423a;
+    --chalk-light: #345a4e;
+    --chalk-lighter: #4a7266;
+    --gold: #dfa53e;
+    --gold-dark: #b8842c;
+    --paper: #f2ecd8;
+    --paper-dark: #e6dcbd;
+    --coral: #bd5646;
+    --coral-dark: #9c4536;
+    --ink: #22211b;
+    --muted: #6f6d5f;
+    --bg: #f6f2e6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .app { max-width: 640px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+  header {
+    background: var(--chalk);
+    color: var(--paper);
+    padding: 20px 20px 16px;
+    border-radius: 0 0 18px 18px;
+  }
+  header h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    letter-spacing: 0.2px;
+  }
+  header .sub { font-size: 13px; color: #cfd9d2; margin-bottom: 16px; }
+
+  .tabs {
+    display: flex;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 4px;
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #cfd9d2;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 9px 0;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tab-btn.active { background: var(--gold); color: #2b1f08; }
+
+  main { flex: 1; padding: 18px 16px 100px; }
+
+  .section-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 4px 14px;
+  }
+  .section-row h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 16px;
+    margin: 0;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .manage-toggle {
+    border: 1.5px solid var(--paper-dark);
+    background: #fff;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .manage-toggle.on { background: var(--coral); color: #fff; border-color: var(--coral); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .card {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 14px 14px 12px;
+    position: relative;
+    border: 1px solid var(--paper-dark);
+  }
+  .card .name {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    margin: 0 0 8px;
+    padding-right: 20px;
+    word-break: break-word;
+  }
+  .points-row { display: flex; align-items: baseline; gap: 5px; margin-bottom: 12px; }
+  .points-num {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--gold-dark);
+    line-height: 1;
+  }
+  .points-label { font-size: 12px; color: var(--muted); }
+
+  .stepper { display: flex; gap: 8px; }
+  .step-btn {
+    flex: 1;
+    border: none;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.08s;
+  }
+  .step-btn:active { transform: scale(0.92); }
+  .step-btn.minus { background: var(--coral); }
+  .step-btn.plus { background: var(--chalk-light); }
+  .step-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .del-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: var(--coral);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .manage-on .del-btn { display: flex; }
+
+  .add-tile {
+    border: 2px dashed var(--paper-dark);
+    border-radius: 16px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    min-height: 96px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  .shop-item {
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .shop-item .info { flex: 1; }
+  .shop-item .iname {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .cost-badge {
+    display: inline-block;
+    margin-top: 3px;
+    background: var(--gold);
+    color: #2b1f08;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+  }
+  .give-btn {
+    border: none;
+    background: var(--chalk);
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .shop-del {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: var(--coral);
+    color: #fff;
+    font-size: 12px;
+    display: none;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .manage-on .shop-del { display: flex; }
+
+  .add-form-row {
+    background: #fff;
+    border: 1.5px solid var(--paper-dark);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .add-form-row input {
+    border: 1.5px solid var(--paper-dark);
+    border-radius: 9px;
+    padding: 9px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+  }
+  .add-form-row input[name="pname"] { flex: 1; min-width: 0; }
+  .add-form-row input[name="pcost"] { width: 64px; }
+  .add-form-row button {
+    border: none;
+    background: var(--gold);
+    color: #2b1f08;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 9px;
+    padding: 0 16px;
+    cursor: pointer;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 40px 20px;
+  }
+
+  .sheet-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(20,20,15,0.45);
+    display: none;
+    align-items: flex-end;
+    z-index: 40;
+  }
+  .sheet-backdrop.open { display: flex; }
+  .sheet {
+    background: #fff;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    padding: 18px 18px 26px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .sheet h3 {
+    font-family: 'Baloo 2', sans-serif;
+    margin: 0 0 4px;
+    font-size: 17px;
+  }
+  .sheet .item-cost-note { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .pick-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 4px;
+    border-bottom: 1px solid #eee5cc;
+    cursor: pointer;
+  }
+  .pick-row:last-child { border-bottom: none; }
+  .pick-row .pn { font-weight: 600; font-family: 'Baloo 2', sans-serif; }
+  .pick-row .pp { color: var(--muted); font-size: 13px; }
+  .pick-row.insufficient { opacity: 0.4; }
+  .sheet-close {
+    display: block;
+    margin: 14px auto 0;
+    border: none;
+    background: var(--bg);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+    max-width: 90vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .loading { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; }
+
+  .kid-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 60px 24px 40px;
+  }
+  .kid-view .kid-name {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 26px;
+  }
+  .kid-view .kid-points {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 84px;
+    font-weight: 800;
+    color: var(--gold-dark);
+    line-height: 1;
+  }
+  .kid-view .kid-points-label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 6px;
+    margin-bottom: 34px;
+  }
+  .kid-view .kid-shop-title {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .kid-view .kid-shop-list {
+    width: 100%;
+    max-width: 320px;
+  }
+  .kid-view .kid-shop-row {
+    display: flex;
+    justify-content: space-between;
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .kid-view .kid-shop-row .kn { font-weight: 600; font-family: 'Baloo 2', sans-serif; }
+  .kid-view .kid-shop-row .kc { color: var(--gold-dark); font-weight: 700; }
+  .kid-view .kid-note {
+    margin-top: 30px;
+    font-size: 12.5px;
+    color: var(--muted);
+    max-width: 280px;
+  }
+
+  .link-btn {
+    border: none;
+    background: var(--chalk-light);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+    margin-top: 8px;
+  }
+  .manage-on .link-btn { display: inline-block; }
+
+  .lock-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 70px 24px 40px;
+  }
+  .lock-label {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  .pin-input {
+    width: 160px;
+    text-align: center;
+    letter-spacing: 6px;
+    font-size: 22px;
+    font-family: 'Baloo 2', sans-serif;
+    padding: 12px 10px;
+    border-radius: 12px;
+    border: 1.5px solid var(--paper-dark);
+    background: var(--paper);
+    margin-bottom: 14px;
+  }
+  .pin-submit {
+    border: none;
+    background: var(--chalk);
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 28px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .pin-error { color: var(--coral-dark); font-size: 13px; margin-top: 14px; }
+
+  .pin-row { text-align: center; margin-top: 24px; }
+  .pin-settings-btn {
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 12.5px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .pin-input-sheet {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--paper-dark);
+    background: var(--bg);
+    font-size: 15px;
+    margin-bottom: 10px;
+    letter-spacing: 3px;
+  }
+
+  .setup-view {
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .setup-view h2 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  .setup-view p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .setup-view code {
+    background: var(--paper);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Class Points</h1>
+    <div class="sub">Tap to give or take points. Spend them in the shop.</div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="students">Students</button>
+      <button class="tab-btn" data-tab="shop">Shop</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="loading">Loading your class…</div>
+  </main>
+</div>
+
+<div class="sheet-backdrop" id="sheetBackdrop">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======================================================================
+   PASTE YOUR APPS SCRIPT WEB APP URL BELOW, between the quotes.
+   It looks like: https://script.google.com/macros/s/AKfycb.../exec
+   ====================================================================== */
+const API_URL = "https://script.google.com/macros/s/AKfycbwjJlk7su2aKrXndpqxPW9OpIZ7rN-yXeHlZ0_AoJnd2xaOJAzlVJS4SdXOaMpMmaSu/exec";
+
+let state = { students: [], shopItems: [], pin: null };
+let activeTab = 'students';
+let manageMode = false;
+let loaded = false;
+let pinUnlocked = false;
+let busy = false;
+
+const viewStudentId = new URLSearchParams(window.location.search).get('student');
+
+function studentLink(id) {
+  return `${window.location.origin}${window.location.pathname}?student=${id}`;
+}
+
+async function apiCall(params) {
+  const url = new URL(API_URL);
+  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error('Network error');
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  if (data.students) state.students = data.students;
+  if (data.shopItems) state.shopItems = data.shopItems;
+  state.pin = data.pin || null;
+  return data;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+async function withBusy(fn) {
+  if (busy) return;
+  busy = true;
+  try {
+    await fn();
+  } catch (e) {
+    showToast("Couldn't reach the sheet — check your connection");
+  } finally {
+    busy = false;
+  }
+}
+
+function route() {
+  if (viewStudentId) {
+    renderStudentView();
+  } else if (state.pin && !pinUnlocked) {
+    renderLockScreen();
+  } else {
+    render();
+  }
+}
+
+async function loadState() {
+  if (!API_URL || API_URL.indexOf('PASTE_YOUR') === 0) {
+    document.getElementById('main').innerHTML = `
+      <div class="setup-view">
+        <h2>Almost there</h2>
+        <p>This copy of the app isn't connected to your Google Sheet yet.
+        Open this file, find <code>API_URL</code> near the top of the script,
+        and paste in your Apps Script web app link.</p>
+      </div>`;
+    return;
+  }
+  try {
+    await apiCall({ action: 'getData' });
+  } catch (e) {
+    document.getElementById('main').innerHTML = `<div class="empty">Couldn't load your class right now. Check your internet connection and reload.</div>`;
+    return;
+  }
+  loaded = true;
+  route();
+}
+
+function render() {
+  if (!loaded) return;
+  const main = document.getElementById('main');
+  if (activeTab === 'students') {
+    main.innerHTML = renderStudents();
+  } else {
+    main.innerHTML = renderShop();
+  }
+  main.innerHTML += `<div class="pin-row"><button id="pinSettingsBtn" class="pin-settings-btn">${state.pin ? 'Change PIN' : 'Set a PIN'}</button></div>`;
+  attachHandlers();
+  const pinBtn = document.getElementById('pinSettingsBtn');
+  if (pinBtn) pinBtn.onclick = openPinSheet;
+}
+
+function renderStudents() {
+  let html = `<div class="section-row"><h2>${state.students.length} student${state.students.length === 1 ? '' : 's'}</h2>
+    <button class="manage-toggle ${manageMode ? 'on' : ''}" id="manageBtn">${manageMode ? 'Done' : 'Edit'}</button></div>`;
+  html += `<div class="grid ${manageMode ? 'manage-on' : ''}">`;
+  state.students.forEach(s => {
+    html += `
+      <div class="card">
+        <button class="del-btn" data-del-student="${s.id}">✕</button>
+        <p class="name">${escapeHtml(s.name)}</p>
+        <div class="points-row">
+          <span class="points-num">${s.points}</span>
+          <span class="points-label">pts</span>
+        </div>
+        <div class="stepper">
+          <button class="step-btn minus" data-adjust="${s.id}" data-delta="-1">−</button>
+          <button class="step-btn plus" data-adjust="${s.id}" data-delta="1">+</button>
+        </div>
+        <button class="link-btn" data-link="${s.id}">Copy his tap-link</button>
+      </div>`;
+  });
+  html += `<button class="add-tile" id="addStudentTile">+ Add student</button>`;
+  html += `</div>`;
+  html += `<div id="addStudentForm"></div>`;
+  return html;
+}
+
+function renderShop() {
+  let html = `<div class="section-row"><h2>${state.shopItems.length} item${state.shopItems.length === 1 ? '' : 's'}</h2>
+    <button class="manage-toggle ${manageMode ? 'on' : ''}" id="manageBtn">${manageMode ? 'Done' : 'Edit'}</button></div>`;
+  html += `<div class="${manageMode ? 'manage-on' : ''}">`;
+  if (state.shopItems.length === 0) {
+    html += `<div class="empty">No shop items yet. Add something students can spend points on.</div>`;
+  }
+  state.shopItems.forEach(item => {
+    html += `
+      <div class="shop-item">
+        <div class="info">
+          <div class="iname">${escapeHtml(item.name)}</div>
+          <span class="cost-badge">${item.cost} pts</span>
+        </div>
+        <button class="shop-del" data-del-item="${item.id}">✕</button>
+        <button class="give-btn" data-give="${item.id}">Give</button>
+      </div>`;
+  });
+  html += `</div>`;
+  html += `<button class="add-tile" id="addItemTile" style="width:100%;margin-top:6px;">+ Add shop item</button>`;
+  html += `<div id="addItemForm"></div>`;
+  return html;
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : str;
+  return d.innerHTML;
+}
+
+function attachHandlers() {
+  const manageBtn = document.getElementById('manageBtn');
+  if (manageBtn) manageBtn.onclick = () => { manageMode = !manageMode; render(); };
+
+  document.querySelectorAll('[data-adjust]').forEach(btn => {
+    btn.onclick = () => withBusy(async () => {
+      const id = btn.getAttribute('data-adjust');
+      const delta = btn.getAttribute('data-delta');
+      await apiCall({ action: 'adjustPoints', id, delta });
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-del-student]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-del-student');
+      const student = state.students.find(s => s.id === id);
+      if (student && confirm(`Remove ${student.name}?`)) {
+        withBusy(async () => {
+          await apiCall({ action: 'deleteStudent', id });
+          render();
+        });
+      }
+    };
+  });
+
+  document.querySelectorAll('[data-del-item]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-del-item');
+      const item = state.shopItems.find(i => i.id === id);
+      if (item && confirm(`Remove ${item.name}?`)) {
+        withBusy(async () => {
+          await apiCall({ action: 'deleteItem', id });
+          render();
+        });
+      }
+    };
+  });
+
+  document.querySelectorAll('[data-give]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-give');
+      openGiveSheet(id);
+    };
+  });
+
+  document.querySelectorAll('[data-link]').forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.getAttribute('data-link');
+      const url = studentLink(id);
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('Link copied — write it to his NFC card');
+      } catch (e) {
+        prompt('Copy this link for his NFC card:', url);
+      }
+    };
+  });
+
+  const addStudentTile = document.getElementById('addStudentTile');
+  if (addStudentTile) addStudentTile.onclick = showAddStudentForm;
+
+  const addItemTile = document.getElementById('addItemTile');
+  if (addItemTile) addItemTile.onclick = showAddItemForm;
+}
+
+function showAddStudentForm() {
+  const container = document.getElementById('addStudentForm');
+  container.innerHTML = `
+    <div class="add-form-row" style="margin-top:12px;">
+      <input type="text" name="pname" placeholder="Student name" autofocus>
+      <button id="saveStudentBtn">Add</button>
+    </div>`;
+  const input = container.querySelector('input');
+  input.focus();
+  const save = () => {
+    const name = input.value.trim();
+    if (!name) return;
+    withBusy(async () => {
+      await apiCall({ action: 'addStudent', name });
+      render();
+    });
+  };
+  container.querySelector('#saveStudentBtn').onclick = save;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
+}
+
+function showAddItemForm() {
+  const container = document.getElementById('addItemForm');
+  container.innerHTML = `
+    <div class="add-form-row" style="margin-top:12px;">
+      <input type="text" name="pname" placeholder="Reward name">
+      <input type="number" name="pcost" placeholder="Pts" min="1">
+      <button id="saveItemBtn">Add</button>
+    </div>`;
+  const nameInput = container.querySelector('input[name="pname"]');
+  const costInput = container.querySelector('input[name="pcost"]');
+  nameInput.focus();
+  const save = () => {
+    const name = nameInput.value.trim();
+    const cost = parseInt(costInput.value, 10);
+    if (!name || !cost || cost < 1) return;
+    withBusy(async () => {
+      await apiCall({ action: 'addItem', name, cost });
+      render();
+    });
+  };
+  container.querySelector('#saveItemBtn').onclick = save;
+  [nameInput, costInput].forEach(inp => inp.addEventListener('keydown', e => { if (e.key === 'Enter') save(); }));
+}
+
+function openGiveSheet(itemId) {
+  const item = state.shopItems.find(i => i.id === itemId);
+  if (!item) return;
+  const sheet = document.getElementById('sheet');
+  if (state.students.length === 0) {
+    sheet.innerHTML = `<h3>${escapeHtml(item.name)}</h3><p class="item-cost-note">Add a student first before redeeming rewards.</p>
+      <button class="sheet-close" id="closeSheet">Close</button>`;
+  } else {
+    let rows = state.students.map(s => {
+      const can = s.points >= item.cost;
+      return `<div class="pick-row ${can ? '' : 'insufficient'}" ${can ? `data-redeem-student="${s.id}"` : ''}>
+        <span class="pn">${escapeHtml(s.name)}</span>
+        <span class="pp">${s.points} pts</span>
+      </div>`;
+    }).join('');
+    sheet.innerHTML = `<h3>${escapeHtml(item.name)}</h3>
+      <p class="item-cost-note">Costs ${item.cost} pts. Choose who's spending them.</p>
+      ${rows}
+      <button class="sheet-close" id="closeSheet">Cancel</button>`;
+  }
+  document.getElementById('sheetBackdrop').classList.add('open');
+  sheet.querySelectorAll('[data-redeem-student]').forEach(row => {
+    row.onclick = () => {
+      const sid = row.getAttribute('data-redeem-student');
+      withBusy(async () => {
+        await apiCall({ action: 'redeem', studentId: sid, itemId: item.id });
+        const student = state.students.find(s => s.id === sid);
+        closeSheet();
+        render();
+        showToast(`${student.name} redeemed ${item.name} — ${student.points} pts left`);
+      });
+    };
+  });
+  sheet.querySelector('#closeSheet').onclick = closeSheet;
+}
+
+function closeSheet() {
+  document.getElementById('sheetBackdrop').classList.remove('open');
+}
+
+document.getElementById('sheetBackdrop').addEventListener('click', (e) => {
+  if (e.target.id === 'sheetBackdrop') closeSheet();
+});
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.getAttribute('data-tab');
+    manageMode = false;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+
+function renderLockScreen() {
+  document.querySelector('.tabs').style.display = 'none';
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="lock-view">
+      <p class="lock-label">Enter your PIN</p>
+      <input type="password" inputmode="numeric" id="pinInput" class="pin-input" maxlength="8">
+      <button id="pinSubmit" class="pin-submit">Unlock</button>
+      <p class="pin-error" id="pinError" style="display:none;">Wrong PIN, try again.</p>
+    </div>`;
+  const input = document.getElementById('pinInput');
+  input.focus();
+  const tryUnlock = () => {
+    if (input.value === state.pin) {
+      pinUnlocked = true;
+      document.querySelector('.tabs').style.display = '';
+      render();
+    } else {
+      document.getElementById('pinError').style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  };
+  document.getElementById('pinSubmit').onclick = tryUnlock;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+}
+
+function openPinSheet() {
+  const sheet = document.getElementById('sheet');
+  const hasPin = !!state.pin;
+  sheet.innerHTML = `
+    <h3>${hasPin ? 'Change PIN' : 'Set a PIN'}</h3>
+    <p class="item-cost-note">${hasPin ? "This locks your dashboard so students can't get into the edit controls." : "Add a PIN so a boy who finds your link can only see his own points, not the controls."}</p>
+    ${hasPin ? '<input type="password" inputmode="numeric" id="curPin" placeholder="Current PIN" class="pin-input-sheet">' : ''}
+    <input type="password" inputmode="numeric" id="newPin" placeholder="New PIN (4+ characters)" class="pin-input-sheet">
+    <input type="password" inputmode="numeric" id="confirmPin" placeholder="Confirm new PIN" class="pin-input-sheet">
+    <button class="give-btn" id="savePinBtn" style="width:100%;margin-top:2px;">${hasPin ? 'Update PIN' : 'Save PIN'}</button>
+    ${hasPin ? '<button class="sheet-close" id="removePinBtn">Remove PIN</button>' : ''}
+    <button class="sheet-close" id="closeSheet">Cancel</button>
+  `;
+  document.getElementById('sheetBackdrop').classList.add('open');
+  document.getElementById('savePinBtn').onclick = () => {
+    if (hasPin && document.getElementById('curPin').value !== state.pin) {
+      showToast('Current PIN is wrong');
+      return;
+    }
+    const np = document.getElementById('newPin').value;
+    const cp = document.getElementById('confirmPin').value;
+    if (np.length < 4) { showToast('PIN needs at least 4 characters'); return; }
+    if (np !== cp) { showToast("PINs don't match"); return; }
+    withBusy(async () => {
+      await apiCall({ action: 'setPin', pin: np });
+      closeSheet();
+      render();
+      showToast('PIN saved');
+    });
+  };
+  if (hasPin) {
+    document.getElementById('removePinBtn').onclick = () => {
+      if (confirm('Remove the PIN? Anyone with your link could then open the dashboard.')) {
+        withBusy(async () => {
+          await apiCall({ action: 'setPin', pin: '' });
+          closeSheet();
+          render();
+          showToast('PIN removed');
+        });
+      }
+    };
+  }
+  document.getElementById('closeSheet').onclick = closeSheet;
+}
+
+function renderStudentView() {
+  const main = document.getElementById('main');
+  const student = state.students.find(s => s.id === viewStudentId);
+
+  document.querySelector('header h1').textContent = 'My Points';
+  document.querySelector('header .sub').textContent = 'Ask your teacher to make changes.';
+  document.querySelector('.tabs').style.display = 'none';
+
+  if (!student) {
+    main.innerHTML = `<div class="empty">This card isn't linked to a student yet. Check with your teacher.</div>`;
+    return;
+  }
+
+  let shopHtml = '';
+  if (state.shopItems.length) {
+    shopHtml = `<div class="kid-shop-title">You can spend points on</div><div class="kid-shop-list">`;
+    state.shopItems.forEach(item => {
+      shopHtml += `<div class="kid-shop-row"><span class="kn">${escapeHtml(item.name)}</span><span class="kc">${item.cost} pts</span></div>`;
+    });
+    shopHtml += `</div>`;
+  }
+
+  main.innerHTML = `
+    <div class="kid-view">
+      <p class="kid-name">${escapeHtml(student.name)}</p>
+      <div class="kid-points">${student.points}</div>
+      <div class="kid-points-label">points</div>
+      ${shopHtml}
+      <p class="kid-note">This screen is view-only. Only your teacher can add, remove, or spend points.</p>
+    </div>`;
+}
+
+loadState();
+</script>
+</body>
+</html>
