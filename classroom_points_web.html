@@ -60,7 +60,7 @@
     color: #cfd9d2;
     font-family: 'Baloo 2', sans-serif;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     padding: 9px 0;
     border-radius: 9px;
     cursor: pointer;
@@ -139,7 +139,6 @@
   .step-btn:active { transform: scale(0.92); }
   .step-btn.minus { background: var(--coral); }
   .step-btn.plus { background: var(--chalk-light); }
-  .step-btn:disabled { opacity: 0.5; cursor: default; }
 
   .del-btn {
     position: absolute;
@@ -157,6 +156,15 @@
     justify-content: center;
   }
   .manage-on .del-btn { display: flex; }
+
+  .pin-display {
+    display: none;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin: -4px 0 8px;
+    letter-spacing: 1px;
+  }
+  .manage-on .pin-display { display: block; }
 
   .add-tile {
     border: 2px dashed var(--paper-dark);
@@ -208,6 +216,7 @@
     border-radius: 10px;
     cursor: pointer;
   }
+  .give-btn:disabled { opacity: 0.45; cursor: default; }
   .shop-del {
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -259,6 +268,52 @@
     padding: 40px 20px;
   }
 
+  .request-card {
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .request-card .rq-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .request-card .rq-name { font-family: 'Baloo 2', sans-serif; font-weight: 700; font-size: 15px; }
+  .request-card .rq-item { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .rq-actions { display: flex; gap: 8px; }
+  .rq-btn {
+    flex: 1;
+    border: none;
+    padding: 9px 0;
+    border-radius: 10px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    color: #fff;
+  }
+  .rq-btn.approve { background: var(--chalk-light); }
+  .rq-btn.deny { background: var(--coral); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--coral);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
   .sheet-backdrop {
     position: fixed; inset: 0;
     background: rgba(20,20,15,0.45);
@@ -283,18 +338,6 @@
     font-size: 17px;
   }
   .sheet .item-cost-note { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
-  .pick-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 4px;
-    border-bottom: 1px solid #eee5cc;
-    cursor: pointer;
-  }
-  .pick-row:last-child { border-bottom: none; }
-  .pick-row .pn { font-weight: 600; font-family: 'Baloo 2', sans-serif; }
-  .pick-row .pp { color: var(--muted); font-size: 13px; }
-  .pick-row.insufficient { opacity: 0.4; }
   .sheet-close {
     display: block;
     margin: 14px auto 0;
@@ -337,17 +380,17 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 60px 24px 40px;
+    padding: 50px 24px 40px;
   }
   .kid-view .kid-name {
     font-family: 'Baloo 2', sans-serif;
     font-size: 26px;
     font-weight: 700;
-    margin: 0 0 26px;
+    margin: 0 0 22px;
   }
   .kid-view .kid-points {
     font-family: 'Baloo 2', sans-serif;
-    font-size: 84px;
+    font-size: 76px;
     font-weight: 800;
     color: var(--gold-dark);
     line-height: 1;
@@ -356,7 +399,7 @@
     font-size: 14px;
     color: var(--muted);
     margin-top: 6px;
-    margin-bottom: 34px;
+    margin-bottom: 30px;
   }
   .kid-view .kid-shop-title {
     font-family: 'Baloo 2', sans-serif;
@@ -364,24 +407,61 @@
     color: var(--muted);
     margin-bottom: 12px;
   }
-  .kid-view .kid-shop-list {
+  .kid-view .kid-shop-list, .kid-view .kid-requests-list {
     width: 100%;
     max-width: 320px;
   }
-  .kid-view .kid-shop-row {
+  .kid-shop-row {
     display: flex;
     justify-content: space-between;
-    background: var(--paper);
+    align-items: center;
+    background: #fff;
     border: 1px solid var(--paper-dark);
     border-radius: 12px;
     padding: 10px 14px;
     margin-bottom: 8px;
     font-size: 14px;
+    gap: 10px;
   }
-  .kid-view .kid-shop-row .kn { font-weight: 600; font-family: 'Baloo 2', sans-serif; }
-  .kid-view .kid-shop-row .kc { color: var(--gold-dark); font-weight: 700; }
+  .kid-shop-row .kn { font-weight: 600; font-family: 'Baloo 2', sans-serif; text-align: left; }
+  .kid-shop-row .kc { color: var(--gold-dark); font-weight: 700; white-space: nowrap; }
+  .kid-req-btn {
+    border: none;
+    background: var(--chalk);
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .kid-req-btn:disabled { opacity: 0.4; cursor: default; }
+  .kid-req-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--paper);
+    border: 1px solid var(--paper-dark);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13.5px;
+  }
+  .kid-req-row .kw { color: var(--muted); }
+  .kid-cancel-btn {
+    border: none;
+    background: var(--coral);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
   .kid-view .kid-note {
-    margin-top: 30px;
+    margin-top: 26px;
     font-size: 12.5px;
     color: var(--muted);
     max-width: 280px;
@@ -406,15 +486,16 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 70px 24px 40px;
+    padding: 60px 24px 40px;
   }
   .lock-label {
     font-family: 'Baloo 2', sans-serif;
     font-size: 17px;
     font-weight: 600;
-    margin: 0 0 18px;
+    margin: 0 0 8px;
     color: var(--ink);
   }
+  .lock-sub { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; max-width: 260px; }
   .pin-input {
     width: 160px;
     text-align: center;
@@ -460,22 +541,10 @@
     letter-spacing: 3px;
   }
 
-  .setup-view {
-    padding: 40px 24px;
-    text-align: center;
-  }
-  .setup-view h2 {
-    font-family: 'Baloo 2', sans-serif;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
+  .setup-view { padding: 40px 24px; text-align: center; }
+  .setup-view h2 { font-family: 'Baloo 2', sans-serif; font-size: 18px; margin-bottom: 10px; }
   .setup-view p { color: var(--muted); font-size: 14px; line-height: 1.5; }
-  .setup-view code {
-    background: var(--paper);
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 13px;
-  }
+  .setup-view code { background: var(--paper); padding: 2px 6px; border-radius: 6px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -483,9 +552,10 @@
   <header>
     <h1>Class Points</h1>
     <div class="sub">Tap to give or take points. Spend them in the shop.</div>
-    <div class="tabs">
+    <div class="tabs" id="tabsRow">
       <button class="tab-btn active" data-tab="students">Students</button>
       <button class="tab-btn" data-tab="shop">Shop</button>
+      <button class="tab-btn" data-tab="requests">Requests<span class="badge" id="reqBadge" style="display:none;"></span></button>
     </div>
   </header>
 
@@ -507,12 +577,17 @@
    ====================================================================== */
 const API_URL = "https://script.google.com/macros/s/AKfycbwjJlk7su2aKrXndpqxPW9OpIZ7rN-yXeHlZ0_AoJnd2xaOJAzlVJS4SdXOaMpMmaSu/exec";
 
-let state = { students: [], shopItems: [], pin: null };
+// ---- Teacher-side state ----
+let state = { students: [], shopItems: [], requests: [], pin: null };
 let activeTab = 'students';
 let manageMode = false;
 let loaded = false;
 let pinUnlocked = false;
 let busy = false;
+
+// ---- Student-side state (kid view) ----
+let kidUnlocked = false;
+let kidData = null; // { id, name, points, shopItems, myRequests }
 
 const viewStudentId = new URLSearchParams(window.location.search).get('student');
 
@@ -527,9 +602,6 @@ async function apiCall(params) {
   if (!res.ok) throw new Error('Network error');
   const data = await res.json();
   if (data.error) throw new Error(data.error);
-  if (data.students) state.students = data.students;
-  if (data.shopItems) state.shopItems = data.shopItems;
-  state.pin = data.pin || null;
   return data;
 }
 
@@ -553,15 +625,7 @@ async function withBusy(fn) {
   }
 }
 
-function route() {
-  if (viewStudentId) {
-    renderStudentView();
-  } else if (state.pin && !pinUnlocked) {
-    renderLockScreen();
-  } else {
-    render();
-  }
-}
+/* ======================= INIT / ROUTING ======================= */
 
 async function loadState() {
   if (!API_URL || API_URL.indexOf('PASTE_YOUR') === 0) {
@@ -574,28 +638,68 @@ async function loadState() {
       </div>`;
     return;
   }
+
+  if (viewStudentId) {
+    document.getElementById('tabsRow').style.display = 'none';
+    document.querySelector('header h1').textContent = 'My Points';
+    document.querySelector('header .sub').textContent = 'Ask your teacher to make changes.';
+    routeKid();
+    return;
+  }
+
   try {
-    await apiCall({ action: 'getData' });
+    const data = await apiCall({ action: 'getData' });
+    applyTeacherData(data);
   } catch (e) {
     document.getElementById('main').innerHTML = `<div class="empty">Couldn't load your class right now. Check your internet connection and reload.</div>`;
     return;
   }
   loaded = true;
-  route();
+  if (state.pin && !pinUnlocked) {
+    renderLockScreen();
+  } else {
+    render();
+  }
 }
+
+function applyTeacherData(data) {
+  if (data.students) state.students = data.students;
+  if (data.shopItems) state.shopItems = data.shopItems;
+  if (data.requests) state.requests = data.requests;
+  state.pin = data.pin || null;
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : str;
+  return d.innerHTML;
+}
+
+/* ======================= TEACHER DASHBOARD ======================= */
 
 function render() {
   if (!loaded) return;
   const main = document.getElementById('main');
-  if (activeTab === 'students') {
-    main.innerHTML = renderStudents();
-  } else {
-    main.innerHTML = renderShop();
-  }
+  if (activeTab === 'students') main.innerHTML = renderStudents();
+  else if (activeTab === 'shop') main.innerHTML = renderShop();
+  else main.innerHTML = renderRequestsTab();
+
   main.innerHTML += `<div class="pin-row"><button id="pinSettingsBtn" class="pin-settings-btn">${state.pin ? 'Change PIN' : 'Set a PIN'}</button></div>`;
   attachHandlers();
+  updateRequestBadge();
   const pinBtn = document.getElementById('pinSettingsBtn');
   if (pinBtn) pinBtn.onclick = openPinSheet;
+}
+
+function updateRequestBadge() {
+  const badge = document.getElementById('reqBadge');
+  const count = state.requests.length;
+  if (count > 0) {
+    badge.style.display = 'inline-flex';
+    badge.textContent = count;
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 function renderStudents() {
@@ -607,6 +711,7 @@ function renderStudents() {
       <div class="card">
         <button class="del-btn" data-del-student="${s.id}">✕</button>
         <p class="name">${escapeHtml(s.name)}</p>
+        <div class="pin-display">${s.pin ? 'PIN: ' + escapeHtml(s.pin) : 'No PIN set yet'}</div>
         <div class="points-row">
           <span class="points-num">${s.points}</span>
           <span class="points-label">pts</span>
@@ -648,10 +753,30 @@ function renderShop() {
   return html;
 }
 
-function escapeHtml(str) {
-  const d = document.createElement('div');
-  d.textContent = str == null ? '' : str;
-  return d.innerHTML;
+function renderRequestsTab() {
+  let html = `<div class="section-row"><h2>${state.requests.length} pending</h2></div>`;
+  if (state.requests.length === 0) {
+    html += `<div class="empty">No requests waiting on you right now.</div>`;
+    return html;
+  }
+  state.requests.forEach(r => {
+    const student = state.students.find(s => s.id === r.studentId);
+    const item = state.shopItems.find(i => i.id === r.itemId);
+    html += `
+      <div class="request-card">
+        <div class="rq-top">
+          <div>
+            <div class="rq-name">${escapeHtml(student ? student.name : 'Unknown student')}</div>
+            <div class="rq-item">wants: ${escapeHtml(item ? item.name : 'Unknown item')} (${item ? item.cost : '?'} pts)</div>
+          </div>
+        </div>
+        <div class="rq-actions">
+          <button class="rq-btn approve" data-approve="${r.id}">Approve</button>
+          <button class="rq-btn deny" data-deny="${r.id}">Deny</button>
+        </div>
+      </div>`;
+  });
+  return html;
 }
 
 function attachHandlers() {
@@ -662,7 +787,7 @@ function attachHandlers() {
     btn.onclick = () => withBusy(async () => {
       const id = btn.getAttribute('data-adjust');
       const delta = btn.getAttribute('data-delta');
-      await apiCall({ action: 'adjustPoints', id, delta });
+      applyTeacherData(await apiCall({ action: 'adjustPoints', id, delta }));
       render();
     });
   });
@@ -673,7 +798,7 @@ function attachHandlers() {
       const student = state.students.find(s => s.id === id);
       if (student && confirm(`Remove ${student.name}?`)) {
         withBusy(async () => {
-          await apiCall({ action: 'deleteStudent', id });
+          applyTeacherData(await apiCall({ action: 'deleteStudent', id }));
           render();
         });
       }
@@ -686,7 +811,7 @@ function attachHandlers() {
       const item = state.shopItems.find(i => i.id === id);
       if (item && confirm(`Remove ${item.name}?`)) {
         withBusy(async () => {
-          await apiCall({ action: 'deleteItem', id });
+          applyTeacherData(await apiCall({ action: 'deleteItem', id }));
           render();
         });
       }
@@ -694,10 +819,23 @@ function attachHandlers() {
   });
 
   document.querySelectorAll('[data-give]').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.getAttribute('data-give');
-      openGiveSheet(id);
-    };
+    btn.onclick = () => openGiveSheet(btn.getAttribute('data-give'));
+  });
+
+  document.querySelectorAll('[data-approve]').forEach(btn => {
+    btn.onclick = () => withBusy(async () => {
+      applyTeacherData(await apiCall({ action: 'approveRequest', id: btn.getAttribute('data-approve') }));
+      render();
+      showToast('Approved');
+    });
+  });
+
+  document.querySelectorAll('[data-deny]').forEach(btn => {
+    btn.onclick = () => withBusy(async () => {
+      applyTeacherData(await apiCall({ action: 'denyRequest', id: btn.getAttribute('data-deny') }));
+      render();
+      showToast('Denied');
+    });
   });
 
   document.querySelectorAll('[data-link]').forEach(btn => {
@@ -733,7 +871,7 @@ function showAddStudentForm() {
     const name = input.value.trim();
     if (!name) return;
     withBusy(async () => {
-      await apiCall({ action: 'addStudent', name });
+      applyTeacherData(await apiCall({ action: 'addStudent', name }));
       render();
     });
   };
@@ -757,7 +895,7 @@ function showAddItemForm() {
     const cost = parseInt(costInput.value, 10);
     if (!name || !cost || cost < 1) return;
     withBusy(async () => {
-      await apiCall({ action: 'addItem', name, cost });
+      applyTeacherData(await apiCall({ action: 'addItem', name, cost }));
       render();
     });
   };
@@ -775,9 +913,9 @@ function openGiveSheet(itemId) {
   } else {
     let rows = state.students.map(s => {
       const can = s.points >= item.cost;
-      return `<div class="pick-row ${can ? '' : 'insufficient'}" ${can ? `data-redeem-student="${s.id}"` : ''}>
-        <span class="pn">${escapeHtml(s.name)}</span>
-        <span class="pp">${s.points} pts</span>
+      return `<div class="request-card" style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="rq-name">${escapeHtml(s.name)} <span style="color:var(--muted);font-weight:400;font-size:12.5px;">(${s.points} pts)</span></span>
+        <button class="give-btn" ${can ? '' : 'disabled'} data-redeem-student="${s.id}">Give</button>
       </div>`;
     }).join('');
     sheet.innerHTML = `<h3>${escapeHtml(item.name)}</h3>
@@ -790,7 +928,7 @@ function openGiveSheet(itemId) {
     row.onclick = () => {
       const sid = row.getAttribute('data-redeem-student');
       withBusy(async () => {
-        await apiCall({ action: 'redeem', studentId: sid, itemId: item.id });
+        applyTeacherData(await apiCall({ action: 'redeem', studentId: sid, itemId: item.id }));
         const student = state.students.find(s => s.id === sid);
         closeSheet();
         render();
@@ -820,7 +958,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 function renderLockScreen() {
-  document.querySelector('.tabs').style.display = 'none';
+  document.getElementById('tabsRow').style.display = 'none';
   const main = document.getElementById('main');
   main.innerHTML = `
     <div class="lock-view">
@@ -834,7 +972,7 @@ function renderLockScreen() {
   const tryUnlock = () => {
     if (input.value === state.pin) {
       pinUnlocked = true;
-      document.querySelector('.tabs').style.display = '';
+      document.getElementById('tabsRow').style.display = '';
       render();
     } else {
       document.getElementById('pinError').style.display = 'block';
@@ -870,7 +1008,7 @@ function openPinSheet() {
     if (np.length < 4) { showToast('PIN needs at least 4 characters'); return; }
     if (np !== cp) { showToast("PINs don't match"); return; }
     withBusy(async () => {
-      await apiCall({ action: 'setPin', pin: np });
+      applyTeacherData(await apiCall({ action: 'setPin', pin: np }));
       closeSheet();
       render();
       showToast('PIN saved');
@@ -880,7 +1018,7 @@ function openPinSheet() {
     document.getElementById('removePinBtn').onclick = () => {
       if (confirm('Remove the PIN? Anyone with your link could then open the dashboard.')) {
         withBusy(async () => {
-          await apiCall({ action: 'setPin', pin: '' });
+          applyTeacherData(await apiCall({ action: 'setPin', pin: '' }));
           closeSheet();
           render();
           showToast('PIN removed');
@@ -891,36 +1029,114 @@ function openPinSheet() {
   document.getElementById('closeSheet').onclick = closeSheet;
 }
 
-function renderStudentView() {
-  const main = document.getElementById('main');
-  const student = state.students.find(s => s.id === viewStudentId);
+/* ======================= KID (NFC CARD) VIEW ======================= */
 
-  document.querySelector('header h1').textContent = 'My Points';
-  document.querySelector('header .sub').textContent = 'Ask your teacher to make changes.';
-  document.querySelector('.tabs').style.display = 'none';
-
-  if (!student) {
-    main.innerHTML = `<div class="empty">This card isn't linked to a student yet. Check with your teacher.</div>`;
+async function routeKid() {
+  if (kidUnlocked && kidData) {
+    renderKidView();
     return;
   }
+  let status;
+  try {
+    status = await apiCall({ action: 'checkStudent', studentId: viewStudentId });
+  } catch (e) {
+    document.getElementById('main').innerHTML = `<div class="empty">Couldn't check this card right now. Check your connection and reload.</div>`;
+    return;
+  }
+  if (!status.exists) {
+    document.getElementById('main').innerHTML = `<div class="empty">This card isn't linked to a student yet. Check with your teacher.</div>`;
+    return;
+  }
+  renderKidPinScreen(!status.hasPin);
+}
+
+function renderKidPinScreen(isFirstTime) {
+  const main = document.getElementById('main');
+  main.innerHTML = `
+    <div class="lock-view">
+      <p class="lock-label">${isFirstTime ? 'Choose a PIN' : 'Enter your PIN'}</p>
+      <p class="lock-sub">${isFirstTime ? "This protects your points. Don't tell other students." : "Ask your teacher if you forgot it."}</p>
+      <input type="password" inputmode="numeric" id="kidPinInput" class="pin-input" maxlength="8">
+      <button id="kidPinSubmit" class="pin-submit">${isFirstTime ? 'Save PIN' : 'Unlock'}</button>
+      <p class="pin-error" id="kidPinError" style="display:none;">Wrong PIN, try again.</p>
+    </div>`;
+  const input = document.getElementById('kidPinInput');
+  input.focus();
+  const submit = () => withBusy(async () => {
+    if (!input.value) return;
+    const result = await apiCall({ action: 'verifyStudentPin', studentId: viewStudentId, pin: input.value });
+    if (result.ok) {
+      kidUnlocked = true;
+      kidData = result.data;
+      renderKidView();
+    } else {
+      document.getElementById('kidPinError').style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  });
+  document.getElementById('kidPinSubmit').onclick = submit;
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+}
+
+function renderKidView() {
+  const main = document.getElementById('main');
 
   let shopHtml = '';
-  if (state.shopItems.length) {
+  if (kidData.shopItems.length) {
     shopHtml = `<div class="kid-shop-title">You can spend points on</div><div class="kid-shop-list">`;
-    state.shopItems.forEach(item => {
-      shopHtml += `<div class="kid-shop-row"><span class="kn">${escapeHtml(item.name)}</span><span class="kc">${item.cost} pts</span></div>`;
+    kidData.shopItems.forEach(item => {
+      const can = kidData.points >= item.cost;
+      const alreadyRequested = kidData.myRequests.some(r => r.itemId === item.id);
+      shopHtml += `<div class="kid-shop-row">
+        <span class="kn">${escapeHtml(item.name)}</span>
+        <span class="kc">${item.cost} pts</span>
+        <button class="kid-req-btn" data-request="${item.id}" ${(!can || alreadyRequested) ? 'disabled' : ''}>${alreadyRequested ? 'Asked' : 'Request'}</button>
+      </div>`;
     });
     shopHtml += `</div>`;
   }
 
+  let reqHtml = '';
+  if (kidData.myRequests.length) {
+    reqHtml = `<div class="kid-shop-title" style="margin-top:22px;">Waiting on your teacher</div><div class="kid-requests-list">`;
+    kidData.myRequests.forEach(r => {
+      const item = kidData.shopItems.find(i => i.id === r.itemId);
+      reqHtml += `<div class="kid-req-row">
+        <span class="kw">${escapeHtml(item ? item.name : 'Item')}</span>
+        <button class="kid-cancel-btn" data-cancel="${r.id}">Cancel</button>
+      </div>`;
+    });
+    reqHtml += `</div>`;
+  }
+
   main.innerHTML = `
     <div class="kid-view">
-      <p class="kid-name">${escapeHtml(student.name)}</p>
-      <div class="kid-points">${student.points}</div>
+      <p class="kid-name">${escapeHtml(kidData.name)}</p>
+      <div class="kid-points">${kidData.points}</div>
       <div class="kid-points-label">points</div>
       ${shopHtml}
-      <p class="kid-note">This screen is view-only. Only your teacher can add, remove, or spend points.</p>
+      ${reqHtml}
+      <p class="kid-note">Requests need your teacher's approval before points are spent.</p>
     </div>`;
+
+  main.querySelectorAll('[data-request]').forEach(btn => {
+    btn.onclick = () => withBusy(async () => {
+      const itemId = btn.getAttribute('data-request');
+      kidData = await apiCall({ action: 'requestRedeem', studentId: viewStudentId, itemId });
+      renderKidView();
+      showToast('Sent to your teacher');
+    });
+  });
+
+  main.querySelectorAll('[data-cancel]').forEach(btn => {
+    btn.onclick = () => withBusy(async () => {
+      const id = btn.getAttribute('data-cancel');
+      kidData = await apiCall({ action: 'cancelRequest', studentId: viewStudentId, id });
+      renderKidView();
+      showToast('Request cancelled');
+    });
+  });
 }
 
 loadState();
