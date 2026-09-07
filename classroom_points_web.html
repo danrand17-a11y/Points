@@ -598,6 +598,7 @@ function studentLink(id) {
 async function apiCall(params) {
   const url = new URL(API_URL);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  url.searchParams.set('_', Date.now()); // avoid cached responses
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error('Network error');
   const data = await res.json();
