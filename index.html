@@ -1171,8 +1171,10 @@ function renderKidView() {
     reqHtml += `</div>`;
   }
 
-  const stat = (label, val) => (val === null || val === undefined) ? '' :
-    `<div class="id-stat"><span class="id-val">${escapeHtml(String(val))}</span><span class="id-lab">${label}</span></div>`;
+  const stat = (label, val) => {
+    const empty = (val === null || val === undefined);
+    return `<div class="id-stat"><span class="id-val"${empty ? ' style="opacity:.35"' : ''}>${empty ? '--' : escapeHtml(String(val))}</span><span class="id-lab">${label}</span></div>`;
+  };
   const idStats = stat('GPA', kidData.gpa) + stat('Detention min this month', kidData.detentionMinutes);
   const attStats = stat('Present', kidData.daysPresent) + stat('Absent', kidData.daysAbsent) + stat('Late', kidData.daysLate);
   const idHtml = (idStats || attStats) ? `<div class="id-card">
