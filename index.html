@@ -274,6 +274,13 @@
     cursor: pointer;
   }
 
+.shop-disclaimer { font-size: 12px; line-height: 1.45; color: #6b6354; background: #efe7d2; border-left: 3px solid #d4af6a; padding: 8px 10px; border-radius: 6px; margin: 8px 0 12px; }
+.id-card { background: #fffdf6; border: 1px solid #d4af6a; border-radius: 12px; padding: 12px 10px; margin: 18px 0 6px; }
+  .id-title { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6b6354; margin: 10px 0 6px; }
+  .id-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .id-stat { flex: 1; min-width: 80px; display: flex; flex-direction: column; align-items: center; padding: 4px 6px; }
+  .id-val { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: #1c2f52; }
+  .id-lab { font-size: 11px; color: #6b6354; text-align: center; }
   .empty {
     text-align: center;
     color: var(--muted);
@@ -750,6 +757,7 @@ function renderStudents() {
 function renderShop() {
   let html = `<div class="section-row"><h2>${state.shopItems.length} item${state.shopItems.length === 1 ? '' : 's'}</h2>
     <button class="manage-toggle ${manageMode ? 'on' : ''}" id="manageBtn">${manageMode ? 'Done' : 'Edit'}</button></div>`;
+  html += `<p class="shop-disclaimer">Costs can change. Any redemption can be declined for any reason. Early dismissal doesn't guarantee a specific day; test days and other required days can be blacked out.</p>`;
   html += `<div class="${manageMode ? 'manage-on' : ''}">`;
   if (state.shopItems.length === 0) {
     html += `<div class="empty">No shop items yet. Add something students can spend points on.</div>`;
@@ -1099,13 +1107,14 @@ async function routeKid() {
     document.getElementById('main').innerHTML = `<div class="empty">This card isn't linked to a student yet. Check with your teacher.</div>`;
     return;
   }
-  renderKidPinScreen(!status.hasPin);
+  renderKidPinScreen(!status.hasPin, status.name);
 }
 
-function renderKidPinScreen(isFirstTime) {
+function renderKidPinScreen(isFirstTime, studentName) {
   const main = document.getElementById('main');
   main.innerHTML = `
     <div class="lock-view">
+      <p class="lock-name" style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;color:#1c2f52;margin:0 0 6px;text-align:center;">${escapeHtml(studentName || '')}</p>
       <p class="lock-label">${isFirstTime ? 'Choose a PIN' : 'Enter your PIN'}</p>
       <p class="lock-sub">${isFirstTime ? "This protects your points. Don't tell other students." : "Ask your teacher if you forgot it."}</p>
       <input type="password" inputmode="numeric" id="kidPinInput" class="pin-input" maxlength="8">
@@ -1136,7 +1145,7 @@ function renderKidView() {
 
   let shopHtml = '';
   if (kidData.shopItems.length) {
-    shopHtml = `<div class="kid-shop-title">You can spend points on</div><div class="kid-shop-list">`;
+    shopHtml = `<div class="kid-shop-title">You can spend points on</div><p class="shop-disclaimer">Costs can change. Any redemption can be declined for any reason. Early dismissal doesn't guarantee a specific day; test days and other required days can be blacked out.</p><div class="kid-shop-list">`;
     kidData.shopItems.forEach(item => {
       const can = kidData.points >= item.cost;
       const alreadyRequested = kidData.myRequests.some(r => r.itemId === item.id);
@@ -1162,11 +1171,21 @@ function renderKidView() {
     reqHtml += `</div>`;
   }
 
+  const stat = (label, val) => (val === null || val === undefined) ? '' :
+    `<div class="id-stat"><span class="id-val">${escapeHtml(String(val))}</span><span class="id-lab">${label}</span></div>`;
+  const idStats = stat('GPA', kidData.gpa) + stat('Detention min this month', kidData.detentionMinutes);
+  const attStats = stat('Present', kidData.daysPresent) + stat('Absent', kidData.daysAbsent) + stat('Late', kidData.daysLate);
+  const idHtml = (idStats || attStats) ? `<div class="id-card">
+      ${idStats ? `<div class="id-row">${idStats}</div>` : ''}
+      ${attStats ? `<div class="id-title">Attendance</div><div class="id-row">${attStats}</div>` : ''}
+    </div>` : '';
+
   main.innerHTML = `
     <div class="kid-view">
       <p class="kid-name">${escapeHtml(kidData.name)}</p>
       <div class="kid-points">${kidData.points}</div>
       <div class="kid-points-label">points</div>
+      ${idHtml}
       ${shopHtml}
       ${reqHtml}
       <p class="kid-note">Requests need your teacher's approval before points are spent.</p>
@@ -1191,7 +1210,6 @@ function renderKidView() {
   });
 }
 
-  
 loadState();
 </script>
 </body>
